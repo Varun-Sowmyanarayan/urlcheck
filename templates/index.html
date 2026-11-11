@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>URLCheck</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 16px; }
+    input[type=text] { width: 75%; padding: 10px; font-size: 16px; }
+    button { padding: 10px 16px; font-size: 16px; cursor: pointer; }
+    .box { margin-top: 24px; padding: 16px; border-radius: 8px; }
+    .SAFE { background: #d9f7d9; }
+    .SUSPICIOUS { background: #fff3c4; }
+    .DANGEROUS { background: #fbd5d5; }
+  </style>
+</head>
+<body>
+  <h1>URLCheck</h1>
+  <p>Paste a link to check it for phishing red flags.</p>
+
+  <form method="POST">
+    <input type="text" name="url" placeholder="http://example.com/login" required>
+    <button type="submit">Check</button>
+  </form>
+
+  {% if result %}
+    <div class="box {{ result.verdict }}">
+      <h2>{{ result.verdict }} (score {{ result.score }}/100)</h2>
+      <p>{{ result.url }}</p>
+      {% if result.reasons %}
+        <ul>
+          {% for reason in result.reasons %}
+            <li>{{ reason }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No red flags found.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <h3>Last checks (saved in fake S3)</h3>
+  <ul>
+    {% for item in history %}
+      <li>{{ item.verdict }} ({{ item.score }}) - {{ item.url }}</li>
+    {% else %}
+      <li>Nothing checked yet.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
